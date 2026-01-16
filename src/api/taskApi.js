@@ -49,10 +49,34 @@ export const approveTask = async (taskId, username) => {
   return res.json();
 };
 
-export const rejectTask = async (taskId, username) => {
+export const getComments = async (taskId) => {
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/comments`);
+  if (!res.ok) throw new Error("Failed to load comments");
+  return res.json();
+};
+
+export const addComment = async (taskId, username, commentText) => {
+  const res = await fetch(
+    `${API_BASE_URL}/tasks/${taskId}/comments?username=${username}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" }, // Sending raw string as body
+      body: commentText,
+    }
+  );
+  if (!res.ok) throw new Error("Failed to add comment");
+  return res.json();
+};
+
+export const rejectTask = async (taskId, username, reason) => {
+  // We send the reason as the body
   const res = await fetch(
     `${API_BASE_URL}/tasks/${taskId}/reject?username=${username}`,
-    { method: "POST" }
+    { 
+        method: "POST",
+        headers: { "Content-Type": "text/plain" }, // Send as plain text
+        body: reason 
+    }
   );
   if (!res.ok) throw new Error("Reject failed");
   return res.json();

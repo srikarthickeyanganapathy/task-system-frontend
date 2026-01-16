@@ -27,34 +27,66 @@ const TaskForm = ({ user, onAssign }) => {
   };
 
   return (
-    <div className="mb-10 rounded-2xl border border-apple-border bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-lg font-medium">Assign new task</h2>
+    <div className="mb-6 bg-white border border-gray-200 rounded-lg">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h2 className="text-base font-semibold text-gray-900">Create New Task</h2>
+      </div>
 
-      <form className="grid grid-cols-1 gap-4 md:grid-cols-4" onSubmit={handleSubmit}>
-        <input
-          className="rounded-lg border border-apple-border px-4 py-3 text-sm"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          className="rounded-lg border border-apple-border px-4 py-3 text-sm"
-          placeholder="Assignee username"
-          value={assigneeUsername}
-          onChange={(e) => setAssigneeUsername(e.target.value)}
-        />
-        <input
-          className="rounded-lg border border-apple-border px-4 py-3 text-sm"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button className="rounded-lg bg-apple-blue px-6 py-3 text-sm font-medium text-white">
-          Assign
-        </button>
+      <form onSubmit={handleSubmit} className="p-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Task name
+            </label>
+            <input
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              placeholder="Enter task name"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Assignee
+            </label>
+            <input
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              placeholder="Enter username"
+              value={assigneeUsername}
+              onChange={(e) => setAssigneeUsername(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              placeholder="Add a description (optional)"
+              rows="3"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        )}
+
+        <div className="mt-6 flex justify-end">
+          <button 
+            type="submit"
+            className="px-5 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors"
+          >
+            Create Task
+          </button>
+        </div>
       </form>
-
-      {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
     </div>
   );
 };
