@@ -81,3 +81,23 @@ export const rejectTask = async (taskId, username, reason) => {
   if (!res.ok) throw new Error("Reject failed");
   return res.json();
 };
+
+// ✨ Checklist API
+export const addChecklistItem = async (taskId, text) => {
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/checklists`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  // console.log(res);
+  if (!res.ok) throw new Error("Failed to add item");
+  return res.json();
+};
+
+export const toggleChecklistItem = async (itemId) => {
+  const res = await fetch(`${API_BASE_URL}/tasks/checklists/${itemId}/toggle`, {
+    method: "POST",
+  });
+  if (!res.ok) throw new Error("Failed to update item");
+  return res.json();
+};

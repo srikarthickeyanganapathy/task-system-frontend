@@ -1,93 +1,95 @@
 import { useState } from "react";
 
 const TaskForm = ({ user, onAssign }) => {
+  const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [assigneeUsername, setAssigneeUsername] = useState("");
-  const [error, setError] = useState("");
+  const [assignee, setAssignee] = useState("");
+  const [priority, setPriority] = useState("NORMAL");
+  const [dueDate, setDueDate] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    if (!title.trim() || !assigneeUsername.trim()) {
-      return setError("Title and Assignee are required");
+    if (!title) return;
+    
+    setLoading(true);
+    try {
+      await onAssign({
+        title,
+        description: "",
+        assigneeUsername: assignee || user.username, // Default to self if empty
+        creatorUsername: user.username,
+        priority,
+        dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+        tags: ""
+      });
+      setTitle("");
+      setAssignee("");
+      setPriority("NORMAL");
+      setDueDate("");
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      setLoading(false);
     }
-
-    onAssign({
-      title,
-      description,
-      assigneeUsername,
-      creatorUsername: user.username,
-    });
-
-    setTitle("");
-    setDescription("");
-    setAssigneeUsername("");
   };
 
   return (
-    <div className="mb-6 bg-white border border-gray-200 rounded-lg">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-base font-semibold text-gray-900">Create New Task</h2>
+    <form onSubmit={handleSubmit} className="group px-6 py-3 flex items-center gap-4 bg-slate-50 hover:bg-white transition-colors border-b border-slate-100 last:border-0">
+      {/* 1. Checkbox Visual */}
+      <div className="col-span-1 w-4 h-4 rounded border border-slate-300 bg-white group-hover:border-violet-400"></div>
+
+      {/* 2. Title Input */}
+      <div className="col-span-6 flex-1">
+        <input
+          type="text"
+          placeholder="+ New list item"
+          className="w-full bg-transparent text-sm font-medium text-slate-600 placeholder-slate-400 focus:outline-none"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Task name
-            </label>
-            <input
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="Enter task name"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
+      {/* 3. Secondary Inputs (Visible on hover or when typing title) */}
+      <div className={`col-span-5 flex items-center gap-3 transition-opacity ${title ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        
+        {/* Assignee */}
+        <input
+          type="text"
+          placeholder="Assignee"
+          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-600 focus:border-violet-500 focus:outline-none w-24"
+          value={assignee}
+          onChange={(e) => setAssignee(e.target.value)}
+        />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Assignee
-            </label>
-            <input
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              placeholder="Enter username"
-              value={assigneeUsername}
-              onChange={(e) => setAssigneeUsername(e.target.value)}
-            />
-          </div>
+        {/* Priority Badge */}
+        <select 
+          value={priority} 
+          onChange={e => setPriority(e.target.value)}
+          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-600 focus:border-violet-500 focus:outline-none cursor-pointer"
+        >
+          <option value="NORMAL">Normal</option>
+          <option value="HIGH">High</option>
+          <option value="URGENT">Urgent</option>
+        </select>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-              placeholder="Add a description (optional)"
-              rows="3"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-        </div>
+        {/* Date */}
+        <input
+          type="date"
+          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-600 focus:border-violet-500 focus:outline-none"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
 
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
-
-        <div className="mt-6 flex justify-end">
-          <button 
-            type="submit"
-            className="px-5 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors"
-          >
-            Create Task
-          </button>
-        </div>
-      </form>
-    </div>
+        {/* Save Button */}
+        <button 
+          type="submit"
+          disabled={loading}
+          className="bg-violet-600 text-white text-xs font-bold px-3 py-1.5 rounded hover:bg-violet-700 disabled:opacity-50"
+        >
+          {loading ? "..." : "Add"}
+        </button>
+      </div>
+    </form>
   );
 };
 
