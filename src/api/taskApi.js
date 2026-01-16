@@ -1,103 +1,107 @@
 const API_BASE_URL = "http://localhost:8080/api";
 
-// ---------------- AUTH ----------------
-export const login = async (username) => {
-  const res = await fetch(`${API_BASE_URL}/auth/login?username=${username}`);
-  if (!res.ok) throw new Error("Login failed");
-  return res.json();
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("jwt_token");
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
 };
 
-// ---------------- TASKS ----------------
-export const getTasks = async (username) => {
-  const res = await fetch(`${API_BASE_URL}/tasks?username=${username}`);
+// Generic response handler for JSON and Text responses
+const handleResponse = async (res) => {
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(err || "Failed to load tasks");
+    const errorText = await res.text().catch(() => "Unknown error");
+    throw new Error(errorText || "Request failed");
   }
-  return res.json();
+  const contentType = res.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    return res.json();
+  }
+  return res.text();
+};
+
+// --- Auth Endpoints ---
+
+export const login = async (username, password) => {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+  return handleResponse(res);
+};
+
+// --- Task Endpoints ---
+
+export const getTasks = async () => {
+  const res = await fetch(`${API_BASE_URL}/tasks`, { headers: getAuthHeaders() });
+  return handleResponse(res);
 };
 
 export const assignTask = async (taskData) => {
   const res = await fetch(`${API_BASE_URL}/tasks/assign`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify(taskData),
   });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Failed to assign task");
-  }
-  return res.json();
+  return handleResponse(res);
 };
 
-export const submitTask = async (taskId, username) => {
-  const res = await fetch(
-    `${API_BASE_URL}/tasks/${taskId}/submit?&username=${username}`,
-    { method: "POST" }
-  );
-  if (!res.ok) throw new Error("Submit failed");
-  return res.json();
+export const submitTask = async (taskId) => {
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/submit`, {
+    method: "POST",
+    headers: getAuthHeaders()
+  });
+  return handleResponse(res);
 };
 
-export const approveTask = async (taskId, username) => {
-  const res = await fetch(
-    `${API_BASE_URL}/tasks/${taskId}/approve?username=${username}`,
-    { method: "POST" }
-  );
-  if (!res.ok) throw new Error("Approve failed");
-  return res.json();
+export const approveTask = async (taskId) => {
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/approve`, {
+    method: "POST",
+    headers: getAuthHeaders()
+  });
+  return handleResponse(res);
 };
+
+export const rejectTask = async (taskId, reason) => {
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/reject`, {
+    method: "POST",
+    headers: { ...getAuthHeaders(), "Content-Type": "text/plain" },
+    body: reason
+  });
+  return handleResponse(res);
+};
+
+// --- Comments & Checklist ---
 
 export const getComments = async (taskId) => {
-  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/comments`);
-  if (!res.ok) throw new Error("Failed to load comments");
-  return res.json();
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/comments`, { headers: getAuthHeaders() });
+  return handleResponse(res);
 };
 
 export const addComment = async (taskId, username, commentText) => {
-  const res = await fetch(
-    `${API_BASE_URL}/tasks/${taskId}/comments?username=${username}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" }, // Sending raw string as body
-      body: commentText,
-    }
-  );
-  if (!res.ok) throw new Error("Failed to add comment");
-  return res.json();
+  const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/comments`, {
+    method: "POST",
+    headers: { ...getAuthHeaders(), "Content-Type": "text/plain" },
+    body: commentText,
+  });
+  return handleResponse(res);
 };
 
-export const rejectTask = async (taskId, username, reason) => {
-  // We send the reason as the body
-  const res = await fetch(
-    `${API_BASE_URL}/tasks/${taskId}/reject?username=${username}`,
-    { 
-        method: "POST",
-        headers: { "Content-Type": "text/plain" }, // Send as plain text
-        body: reason 
-    }
-  );
-  if (!res.ok) throw new Error("Reject failed");
-  return res.json();
-};
-
-// ✨ Checklist API
 export const addChecklistItem = async (taskId, text) => {
   const res = await fetch(`${API_BASE_URL}/tasks/${taskId}/checklists`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ text }),
   });
-  // console.log(res);
-  if (!res.ok) throw new Error("Failed to add item");
-  return res.json();
+  return handleResponse(res);
 };
 
 export const toggleChecklistItem = async (itemId) => {
   const res = await fetch(`${API_BASE_URL}/tasks/checklists/${itemId}/toggle`, {
     method: "POST",
+    headers: getAuthHeaders(),
   });
-  if (!res.ok) throw new Error("Failed to update item");
-  return res.json();
+  return handleResponse(res);
 };

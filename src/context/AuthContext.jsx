@@ -5,39 +5,57 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Start true to check storage first
+  const [loading, setLoading] = useState(true);
 
-  // ✨ Check localStorage on load
+  // Parse JWT payload safely
+  const decodeToken = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      
+      const decoded = JSON.parse(jsonPayload);
+      const rawRole = decoded.roles ? decoded.roles.split('.')[0] : "ROLE_EMPLOYEE";
+      
+      return {
+        username: decoded.sub,
+        role: { name: rawRole.replace("ROLE_", "") }
+      };
+    } catch (e) {
+      return null;
+    }
+  };
+
   useEffect(() => {
-    const storedUser = localStorage.getItem("taskflow_user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      const userData = decodeToken(token);
+      userData ? setUser(userData) : localStorage.removeItem("jwt_token");
     }
     setLoading(false);
   }, []);
 
-  const login = async (username) => {
-    setLoading(true);
+  const login = async (username, password) => {
     try {
-      const userData = await loginApi(username);
-      setUser(userData);
-      // ✨ Save to localStorage
-      localStorage.setItem("taskflow_user", JSON.stringify(userData));
-      return userData;
-    } finally {
-      setLoading(false);
+      const token = await loginApi(username, password);
+      localStorage.setItem("jwt_token", token);
+      setUser(decodeToken(token));
+      return true;
+    } catch (err) {
+      throw err;
     }
   };
 
   const logout = () => {
     setUser(null);
-    // ✨ Clear from localStorage
-    localStorage.removeItem("taskflow_user");
+    localStorage.removeItem("jwt_token");
   };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

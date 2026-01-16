@@ -1,95 +1,125 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const TaskForm = ({ user, onAssign }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const formRef = useRef(null);
+
+  // Form State
   const [title, setTitle] = useState("");
-  const [assignee, setAssignee] = useState("");
+  const [assignee, setAssignee] = useState(user?.username || "");
   const [priority, setPriority] = useState("NORMAL");
   const [dueDate, setDueDate] = useState("");
 
+  // Close form when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (formRef.current && !formRef.current.contains(event.target) && !title) {
+        setIsExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [title]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title) return;
+    if (!title.trim()) return;
     
     setLoading(true);
     try {
       await onAssign({
         title,
         description: "",
-        assigneeUsername: assignee || user.username, // Default to self if empty
+        assigneeUsername: assignee || user.username,
         creatorUsername: user.username,
         priority,
         dueDate: dueDate ? new Date(dueDate).toISOString() : null,
         tags: ""
       });
+      
+      // Reset & Collapse
       setTitle("");
-      setAssignee("");
       setPriority("NORMAL");
       setDueDate("");
+      setIsExpanded(false);
     } catch (err) {
-      alert("Error: " + err.message);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="group px-6 py-3 flex items-center gap-4 bg-slate-50 hover:bg-white transition-colors border-b border-slate-100 last:border-0">
-      {/* 1. Checkbox Visual */}
-      <div className="col-span-1 w-4 h-4 rounded border border-slate-300 bg-white group-hover:border-violet-400"></div>
+    <div ref={formRef} className={`mb-3 transition-all duration-300 ease-in-out ${isExpanded ? 'bg-[#1F222B] border-violet-500/30 shadow-xl' : 'bg-[#0F1117] border-white/10 hover:border-white/20'} border rounded-xl overflow-hidden`}>
+      <form onSubmit={handleSubmit}>
+        {/* Top: Input Area */}
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className={`w-4 h-4 rounded border transition-colors ${isExpanded ? 'border-violet-500' : 'border-white/20'}`}></div>
+          <input 
+            type="text" 
+            placeholder="+ Add a new task" 
+            className="flex-1 bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none"
+            value={title}
+            onFocus={() => setIsExpanded(true)}
+            onChange={(e) => setTitle(e.target.value)}
+            disabled={loading}
+          />
+        </div>
 
-      {/* 2. Title Input */}
-      <div className="col-span-6 flex-1">
-        <input
-          type="text"
-          placeholder="+ New list item"
-          className="w-full bg-transparent text-sm font-medium text-slate-600 placeholder-slate-400 focus:outline-none"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
+        {/* Bottom: Expanded Options (Animated) */}
+        {isExpanded && (
+          <div className="px-4 pb-3 pt-1 flex items-center justify-between animate-fade-in border-t border-white/5 bg-[#161922]">
+            <div className="flex items-center gap-2">
+              
+              {/* Assignee Input */}
+              <div className="relative group">
+                <div className="flex items-center gap-1 bg-[#0F1117] border border-white/10 px-2 py-1 rounded text-xs text-slate-300 hover:border-violet-500 transition-colors">
+                  <svg className="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                  <input 
+                    className="bg-transparent w-20 outline-none text-white placeholder-slate-500" 
+                    placeholder="Assignee" 
+                    value={assignee}
+                    onChange={(e) => setAssignee(e.target.value)}
+                  />
+                </div>
+              </div>
 
-      {/* 3. Secondary Inputs (Visible on hover or when typing title) */}
-      <div className={`col-span-5 flex items-center gap-3 transition-opacity ${title ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-        
-        {/* Assignee */}
-        <input
-          type="text"
-          placeholder="Assignee"
-          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-600 focus:border-violet-500 focus:outline-none w-24"
-          value={assignee}
-          onChange={(e) => setAssignee(e.target.value)}
-        />
+              {/* Date Input */}
+              <div className="relative">
+                <input 
+                  type="datetime-local" 
+                  className="bg-[#0F1117] border border-white/10 px-2 py-1 rounded text-xs text-slate-300 outline-none hover:border-violet-500 transition-colors w-32"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                />
+              </div>
 
-        {/* Priority Badge */}
-        <select 
-          value={priority} 
-          onChange={e => setPriority(e.target.value)}
-          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-600 focus:border-violet-500 focus:outline-none cursor-pointer"
-        >
-          <option value="NORMAL">Normal</option>
-          <option value="HIGH">High</option>
-          <option value="URGENT">Urgent</option>
-        </select>
+              {/* Priority Selector */}
+              <select 
+                value={priority} 
+                onChange={(e) => setPriority(e.target.value)}
+                className={`bg-[#0F1117] border border-white/10 px-2 py-1 rounded text-xs outline-none hover:border-violet-500 transition-colors cursor-pointer ${
+                  priority === 'URGENT' ? 'text-red-400' : priority === 'HIGH' ? 'text-amber-400' : 'text-slate-300'
+                }`}
+              >
+                <option value="NORMAL">Normal</option>
+                <option value="HIGH">High Priority</option>
+                <option value="URGENT">Urgent</option>
+              </select>
+            </div>
 
-        {/* Date */}
-        <input
-          type="date"
-          className="bg-white border border-slate-200 rounded px-2 py-1 text-xs text-slate-600 focus:border-violet-500 focus:outline-none"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
-
-        {/* Save Button */}
-        <button 
-          type="submit"
-          disabled={loading}
-          className="bg-violet-600 text-white text-xs font-bold px-3 py-1.5 rounded hover:bg-violet-700 disabled:opacity-50"
-        >
-          {loading ? "..." : "Add"}
-        </button>
-      </div>
-    </form>
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="bg-violet-600 hover:bg-violet-500 text-white px-3 py-1 rounded text-xs font-bold transition-all shadow-lg shadow-violet-900/20 disabled:opacity-50"
+            >
+              {loading ? "..." : "Save"}
+            </button>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 
