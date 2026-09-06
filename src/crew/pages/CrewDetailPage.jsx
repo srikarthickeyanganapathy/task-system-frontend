@@ -26,6 +26,8 @@ import { cn } from '@/shared/lib/cn';
 import { SPRINGS } from '@/shared/lib/uxTokens';
 import { toast } from 'sonner';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { DropdownMenu } from '@/shared/ui/DropdownMenu';
+import { EditCrewModal } from '../components/EditCrewModal';
 
 const CREW_TABS = ['overview', 'tasks', 'channels', 'projects', 'whiteboards', 'members']
 
@@ -107,6 +109,7 @@ export function CrewDetailPage() {
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showFab, setShowFab] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const sentinelRef = useRef(null);
 
   const { data: crew, isLoading: isCrewLoading } = useCrew(crewId);
@@ -368,6 +371,35 @@ export function CrewDetailPage() {
                     <Button variant="outline" size="sm" onClick={handleLeaveCrew} className="gap-1 text-[11px] h-7 hidden sm:inline-flex text-[var(--danger)] hover:text-[var(--danger)]">
                       <Icons.logout className="w-3 h-3" /> Leave
                     </Button>
+                    <DropdownMenu
+                      trigger={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 w-7 p-0 flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                          title="Crew settings and actions"
+                          aria-label="Crew settings and actions"
+                        >
+                          <Icons.moreVertical className="w-3.5 h-3.5" />
+                        </Button>
+                      }
+                      items={[
+                        ...(isCreator ? [
+                          {
+                            label: 'Edit Crew',
+                            icon: Icons.pencil,
+                            onClick: () => setIsEditModalOpen(true),
+                          }
+                        ] : []),
+                        {
+                          label: isCreator && members.length <= 1 ? 'Delete Crew' : 'Leave Crew',
+                          icon: Icons.logout,
+                          onClick: handleLeaveCrew,
+                          danger: true,
+                          separator: isCreator ? 'before' : undefined,
+                        },
+                      ]}
+                    />
                     <Button
                       variant="ghost" size="sm"
                       onClick={() => setShowSidebar(!showSidebar)}
@@ -499,6 +531,15 @@ export function CrewDetailPage() {
       </PageState>
 
       {confirmDialog}
+
+      {crew && (
+        <EditCrewModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          crew={crew}
+          membersCount={members.length}
+        />
+      )}
 
       {/* Quick Jump FAB */}
       <QuickJumpFab visible={showFab} />
