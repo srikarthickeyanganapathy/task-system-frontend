@@ -45,7 +45,7 @@ export function MemberCard({ member, isCreator, index, searchQuery, workload, on
           <div className="w-full h-1 bg-[var(--bg-subtle)] rounded-full overflow-hidden">
             <div
               className={cn('h-full rounded-full', workload.barColor)}
-              style={{ width: `${Math.min(100, Math.max(6, (workload.active / 6) * 100))}%` }}
+              style={{ width: workload.active > 0 ? `${Math.min(100, (workload.active / 6) * 100)}%` : '0%' }}
             />
           </div>
         </div>
@@ -60,14 +60,16 @@ export function MemberCard({ member, isCreator, index, searchQuery, workload, on
         {isCreator && !isOwner && (
           <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
             <button
-              className="font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              className="font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded px-1"
               onClick={() => onTransfer(member.userId)}
+              aria-label={`Transfer ownership to ${member.username}`}
             >
               Make owner
             </button>
             <button
-              className="font-medium text-[var(--danger)] hover:opacity-80"
+              className="font-medium text-[var(--danger)] hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--danger)] rounded px-1"
               onClick={() => onRemove(member.userId)}
+              aria-label={`Remove ${member.username} from crew`}
             >
               Remove
             </button>

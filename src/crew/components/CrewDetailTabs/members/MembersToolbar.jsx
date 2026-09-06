@@ -3,6 +3,7 @@ import { SearchInput } from '@/shared/ui/SearchInput';
 import { Button } from '@/shared/ui/Button';
 import { cn } from '@/shared/lib/cn';
 import { LayoutGrid, List } from '@/shared/ui/Icons';
+import { PillNav } from '@/shared/ui/PillNav';
 
 // Controls: search, role filter, view switcher & invite actions
 export function MembersToolbar({
@@ -39,22 +40,14 @@ export function MembersToolbar({
         </SelectContent>
       </Select>
 
-      <div className="flex items-center gap-3 text-[var(--text-muted)]">
-        <button
-          onClick={() => onViewModeChange('grid')}
-          aria-label="Grid view"
-          className={cn('p-1.5 rounded transition-colors', viewMode === 'grid' && 'text-[var(--accent)]')}
-        >
-          <LayoutGrid className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => onViewModeChange('table')}
-          aria-label="Table view"
-          className={cn('p-1.5 rounded transition-colors', viewMode === 'table' && 'text-[var(--accent)]')}
-        >
-          <List className="w-4 h-4" />
-        </button>
-      </div>
+      <PillNav
+        items={[
+          { value: 'grid', label: 'Grid', icon: LayoutGrid },
+          { value: 'table', label: 'Table', icon: List }
+        ]}
+        value={viewMode}
+        onChange={onViewModeChange}
+      />
 
       <div className="flex items-center gap-2 ml-auto">
         <Button variant="outline" size="sm" className="h-9 text-sm" onClick={onGenerateInviteLink} isLoading={isInviteLinkPending}>

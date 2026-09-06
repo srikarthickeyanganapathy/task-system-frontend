@@ -17,10 +17,7 @@ import {
   DistributionChart,
   RebalanceSimulator,
 } from '@/organization/workload/features/components';
-import {
-  getThresholdKey,
-  ensureHistory,
-} from '../features/utils/workloadHistoryStorage';
+import { getThresholdKey } from '../features/utils/workloadHistoryStorage';
 import { CapacityThresholdControl } from '../components/CapacityThresholdControl';
 import { SectionDivider } from '../components/SectionDivider';
 import { HeatmapMatrix } from '../components/HeatmapMatrix';
@@ -47,16 +44,20 @@ export function WorkloadPage() {
     const saved = orgId ? localStorage.getItem(getThresholdKey(orgId)) : null;
     return saved ? parseInt(saved, 10) : 8;
   });
-  const [history, setHistory] = useState({});
+  
+  const history = useMemo(() => {
+    const hist = {};
+    rows.forEach((row) => {
+      const userId = row.user?.id || row.user?.username;
+      if (userId) {
+        hist[userId] = row.history || [];
+      }
+    });
+    return hist;
+  }, [rows]);
+
   const [filter, setFilter] = useState('all');
   const [expandedCards, setExpandedCards] = useState({});
-
-  useEffect(() => {
-    if (orgId && rows.length > 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- deliberate org-scoped history init
-      setHistory(ensureHistory(orgId, rows));
-    }
-  }, [orgId, rows]);
 
   /* --- Stepper handlers --- */
   const handleDecrement = () => {

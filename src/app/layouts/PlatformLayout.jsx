@@ -31,7 +31,7 @@ export function PlatformLayout() {
         <div className="flex flex-1 flex-col bg-[var(--bg-base)] rounded-[var(--radius-xl)] shadow-sm border border-[var(--color-border-subtle)] overflow-hidden relative">
           <AppTopbar onMenuClick={() => setMobileMenuOpen(prev => !prev)} />
           
-          <main className="flex-1 overflow-y-auto overflow-x-hidden relative custom-scrollbar">
+          <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto overflow-x-hidden relative custom-scrollbar">
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={location.pathname}

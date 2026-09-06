@@ -98,7 +98,7 @@ export function MembersTab({ crewId, members = [], memberCap = 10, isCreator = f
         navigator.clipboard.writeText(link);
         setIsLinkCopied(true);
         toast.success('Invite link generated and copied to clipboard!');
-        setTimeout(() => setIsLinkCopied(false), 2500);
+        setTimeout(() => setIsLinkCopied(false), 2000);
       },
     });
   };
@@ -180,7 +180,7 @@ export function MembersTab({ crewId, members = [], memberCap = 10, isCreator = f
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-[1400px] mx-auto">
+    <div className="space-y-6">
       {!isCreator && <ReadOnlyBanner />}
 
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">

@@ -4,9 +4,17 @@ import { MissionControlV2 } from "./MissionControlView";
 import { PageShell } from "@/shared/ui/PageShell";
 import { PageState } from "@/shared/ui/PageState";
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { useSEO } from "@/shared/seo";
 
 export function DashboardPage() {
   const vm = useMissionControlViewModel();
+
+  useSEO({
+    title: 'Dashboard',
+    description: 'Ryokai mission control dashboard: real-time velocity, active tasks, blockers, and workspace telemetry.',
+    ogTitle: 'Dashboard | Ryokai',
+    noindex: true,
+  });
 
   return (
     <PageShell maxWidth="default">

@@ -20,23 +20,4 @@ export const saveHistory = (orgId, history) => {
   }
 };
 
-export const ensureHistory = (orgId, rows) => {
-  const history = loadHistory(orgId);
-  let updated = false;
-
-  rows.forEach((row) => {
-    const userId = row.user?.id || row.user?.username;
-    if (!userId) return;
-    if (!history[userId]) {
-      const base = row.totalActiveCount || 0;
-      history[userId] = Array.from({ length: 14 }, (_, i) => {
-        const variance = Math.floor(Math.random() * 5) - 2;
-        return Math.max(0, base + variance);
-      });
-      updated = true;
-    }
-  });
-
-  if (updated) saveHistory(orgId, history);
-  return history;
-};
+// History is now provided by the backend API — see WorkloadDTOs.DailySnapshot

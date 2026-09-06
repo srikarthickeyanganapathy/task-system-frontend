@@ -3,11 +3,12 @@ import { QueryClient } from '@tanstack/react-query';
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 15000, // 15 seconds -- data considered fresh for this duration
-      gcTime: 300000, // 5 minutes -- keep inactive cache for quick re-mount
+      staleTime: 60 * 1000, // 60 seconds fresh duration
+      gcTime: 10 * 60 * 1000, // 10 minutes cache persistence
       retry: 1,
-      refetchOnWindowFocus: false, // Redundant -- STOMP real-time + polling cover freshness
-      retryOnMount: false,
+      refetchOnWindowFocus: false, // Prevent jarring refetches on window focus
+      refetchOnMount: true, // Stale-while-revalidate background refresh on mount
+      refetchOnReconnect: true, // Auto-revalidate when connection restores
     },
     mutations: {
       retry: 0,

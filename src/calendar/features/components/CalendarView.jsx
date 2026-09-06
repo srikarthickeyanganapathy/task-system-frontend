@@ -14,7 +14,7 @@ import { useCreateTask } from '@/task'
 import { useCreateEvent } from '../hooks/useCalendar'
 import { cn } from '@/shared/lib/cn'
 
-export function CalendarView({ tasks, events = [], isLoading, onTaskClick, onEventClick, onVisibleRangeChange, TaskFormComponent, scope = {}, eyebrow }) {
+function CalendarViewComponent({ tasks, events = [], isLoading, onTaskClick, onEventClick, onVisibleRangeChange, TaskFormComponent, scope = {}, eyebrow }) {
   const [searchParams, setSearchParams] = useSearchParams()
   const mode = searchParams.get('mode') || 'month'
 
@@ -76,22 +76,22 @@ export function CalendarView({ tasks, events = [], isLoading, onTaskClick, onEve
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
-              {eyebrow}   {mode === 'month' ? 'Month' : `Week of ${format(startOfWeek(currentDate), 'EEE d')}`}
+              {eyebrow} · {mode === 'month' ? 'Month' : `Week of ${format(startOfWeek(currentDate), 'EEE d')}`}
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)] leading-none flex items-baseline">
             {format(currentDate, 'MMMM')} <span className="text-[13px] font-semibold text-[var(--text-tertiary)] tracking-[0.06em] ml-2">{format(currentDate, 'yyyy')}</span>
           </h2>
           <p className="mt-1.5 text-[13px] text-[var(--text-secondary)]">
-            <span className="font-semibold text-[var(--text-secondary)]">{rangeCounts.events}</span> events   <span className="font-semibold text-[var(--text-secondary)]">{rangeCounts.tasks}</span> tasks this period
+            <span className="font-semibold text-[var(--text-primary)]">{rangeCounts.events}</span> events · <span className="font-semibold text-[var(--text-primary)]">{rangeCounts.tasks}</span> tasks this period
           </p>
         </div>
         
         <div className="flex items-center gap-2 flex-wrap shrink-0">
           <div className="flex items-center gap-1.5 mr-2">
-            <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]" onClick={prev}><ChevronLeft className="w-4 h-4" /></Button>
-            <Button variant="outline" className="h-8 px-3.5 rounded-lg text-[12px] font-semibold text-[var(--accent)] border-[var(--accent-border)] bg-[var(--accent-soft)] hover:bg-[var(--accent-border)]" onClick={today}>Today</Button>
-            <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]" onClick={next}><ChevronRight className="w-4 h-4" /></Button>
+            <Button variant="outline" size="icon" aria-label={mode === 'month' ? 'Previous month' : 'Previous week'} className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]" onClick={prev}><ChevronLeft className="w-4 h-4" /></Button>
+            <Button variant="outline" className="h-8 px-3.5 rounded-lg text-[12px] font-semibold text-[var(--accent)] border-[var(--accent-border)] bg-[var(--accent-soft)] hover:bg-[var(--accent-border)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]" onClick={today}>Today</Button>
+            <Button variant="outline" size="icon" aria-label={mode === 'month' ? 'Next month' : 'Next week'} className="w-8 h-8 rounded-lg bg-[var(--bg-elevated)] border-[var(--border-subtle)] hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]" onClick={next}><ChevronRight className="w-4 h-4" /></Button>
           </div>
           <div data-tour="calendar-view-toggle">
           <PillNav
@@ -138,10 +138,10 @@ export function CalendarView({ tasks, events = [], isLoading, onTaskClick, onEve
       </div>
 
       <Modal open={!!quickAddDate} onOpenChange={(open) => !open && setQuickAddDate(null)}>
-        <ModalContent className="sm:max-w-md !bg-[var(--bg-card)] !backdrop-blur-none border border-[var(--border-subtle)] shadow-xl rounded-xl p-6">
-          <div className="flex items-center gap-1 mb-5 bg-[var(--bg-subtle)] rounded-md p-0.5 w-fit border border-[var(--border-subtle)]">
-            <Button variant="ghost" onClick={() => setCreateType('event')} className={cn('px-3 py-1 text-[11px] font-medium rounded-sm transition-colors h-auto', createType === 'event' ? 'bg-[var(--bg-card)] shadow-sm text-[var(--text-primary)]' : 'text-[var(--text-muted)]')}>Event</Button>
-            <Button variant="ghost" onClick={() => setCreateType('task')} className={cn('px-3 py-1 text-[11px] font-medium rounded-sm transition-colors h-auto', createType === 'task' ? 'bg-[var(--bg-card)] shadow-sm text-[var(--text-primary)]' : 'text-[var(--text-muted)]')}>Task</Button>
+        <ModalContent className="sm:max-w-md !bg-[var(--bg-card)] !backdrop-blur-none border border-[var(--border-subtle)] shadow-xl rounded-2xl p-6">
+          <div className="flex items-center gap-1 mb-5 bg-[var(--bg-subtle)] rounded-lg p-0.5 w-fit border border-[var(--border-subtle)]">
+            <Button variant="ghost" onClick={() => setCreateType('event')} className={cn('px-3 py-1 text-[11px] font-medium rounded-md transition-colors h-auto', createType === 'event' ? 'bg-[var(--bg-card)] shadow-sm text-[var(--text-primary)] font-semibold' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]')}>Event</Button>
+            <Button variant="ghost" onClick={() => setCreateType('task')} className={cn('px-3 py-1 text-[11px] font-medium rounded-md transition-colors h-auto', createType === 'task' ? 'bg-[var(--bg-card)] shadow-sm text-[var(--text-primary)] font-semibold' : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]')}>Task</Button>
           </div>
 
           {createType === 'task' ? (
@@ -156,4 +156,6 @@ export function CalendarView({ tasks, events = [], isLoading, onTaskClick, onEve
     </div>
   )
 }
+
+export const CalendarView = React.memo(CalendarViewComponent)
 

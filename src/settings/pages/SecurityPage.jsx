@@ -15,22 +15,7 @@ import { InteractiveCard } from '@/shared/ui/InteractiveCard'
 
 export function SecurityPage() {
   const changePassword = useChangePassword()
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
-  const [twoFactorPending, setTwoFactorPending] = useState(false)
 
-  const handleTwoFactorToggle = async (checked) => {
-    setTwoFactorPending(true)
-    try {
-      // TODO: Replace with actual 2FA API call when backend endpoint is available
-      // await toggleTwoFactor(checked)
-      setTwoFactorEnabled(checked)
-      toast.success(checked ? 'Two-factor authentication enabled' : 'Two-factor authentication disabled')
-    } catch {
-      toast.error('Failed to update two-factor authentication')
-    } finally {
-      setTwoFactorPending(false)
-    }
-  }
 
   const form = useForm({
     defaultValues: {
@@ -188,19 +173,21 @@ export function SecurityPage() {
             </Form>
           </motion.div>
 
-          {/*     TWO-FACTOR AUTHENTICATION */}
           <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.05 }}>
             <div className="space-y-3">
-              <Heading level={4} className="text-sm font-bold text-[var(--text-primary)]">
-                Two-Factor Authentication (2FA)
-              </Heading>
+              <div className="flex items-center gap-3">
+                <Heading level={4} className="text-sm font-bold text-[var(--text-primary)]">
+                  Two-Factor Authentication (2FA)
+                </Heading>
+                <div className="inline-flex items-center rounded border border-[var(--border-subtle)] bg-[var(--bg-subtle)] px-2 py-0.5 text-[10px] font-mono text-[var(--text-secondary)]">Coming Soon</div>
+              </div>
               <InteractiveCard padding={false} className="overflow-hidden">
                 <div className="px-6">
-                  <SettingsRow label="Authenticator App (TOTP)" description="Secure your account using Google Authenticator or 1Password">
+                  <SettingsRow label="Authenticator App (TOTP)" description="This feature is not yet available">
                     <Switch
-                      checked={twoFactorEnabled}
-                      onCheckedChange={handleTwoFactorToggle}
-                      disabled={twoFactorPending}
+                      checked={false}
+                      onCheckedChange={() => {}}
+                      disabled={true}
                     />
                   </SettingsRow>
                 </div>

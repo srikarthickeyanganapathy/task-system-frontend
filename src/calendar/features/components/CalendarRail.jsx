@@ -3,7 +3,7 @@ import { format, isAfter, isBefore, isSameDay, parseISO, startOfToday, startOfWe
 import { CalendarDays, Sparkles } from '@/shared/ui/Icons'
 import { cn } from '@/shared/lib/cn'
 
-function UpNextItem({ item, onClick }) {
+const UpNextItem = React.memo(function UpNextItem({ item, onClick }) {
   const isEvent = item.__type === 'event'
   const date = parseISO(isEvent ? item.startTime : item.dueDate)
   const timeLabel = isEvent ? (item.isAllDay ? 'All day' : format(date, 'h:mm a')) : format(date, 'h:mm a')
@@ -11,10 +11,12 @@ function UpNextItem({ item, onClick }) {
 
   return (
     <button
+      type="button"
       onClick={() => onClick(item)}
-      className="flex items-center gap-2.5 px-4 py-3 border-b border-[var(--border-subtle)] cursor-pointer transition-colors text-left w-full hover:bg-[var(--bg-hover)] last:border-b-0"
+      className="flex items-center gap-2.5 px-4 py-3 border-b border-[var(--border-subtle)] cursor-pointer transition-colors text-left w-full hover:bg-[var(--bg-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:z-10 last:border-b-0"
     >
       <i 
+        aria-hidden="true"
         className={cn(
           "w-[7px] h-[7px] rounded-[2px] shrink-0",
           isEvent ? "bg-[var(--accent)]" : "bg-[var(--warning)]"
@@ -25,7 +27,7 @@ function UpNextItem({ item, onClick }) {
           {item.title}
         </div>
         <div className="font-mono text-[9px] text-[var(--text-tertiary)] mt-0.5">
-          {dateLabel}   {timeLabel}
+          {dateLabel} · {timeLabel}
         </div>
       </div>
       <span className="font-mono text-[9px] text-[var(--text-tertiary)] shrink-0">
@@ -33,9 +35,9 @@ function UpNextItem({ item, onClick }) {
       </span>
     </button>
   )
-}
+})
 
-export function CalendarRail({ tasks = [], events = [], onTaskClick, onEventClick }) {
+function CalendarRailComponent({ tasks = [], events = [], onTaskClick, onEventClick }) {
   const today = startOfToday()
   const weekStart = startOfWeek(today)
   const weekEnd = endOfWeek(today)
@@ -73,7 +75,7 @@ export function CalendarRail({ tasks = [], events = [], onTaskClick, onEventClic
           {upNext.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-6 px-4">
               <div className="w-8 h-8 rounded-full bg-[var(--bg-subtle)] flex items-center justify-center mb-2">
-                <Sparkles className="w-3.5 h-3.5 text-[var(--text-muted)] opacity-60" />
+                <Sparkles className="w-3.5 h-3.5 text-[var(--text-tertiary)] opacity-60" />
               </div>
               <span className="text-[11.5px] font-medium text-[var(--text-secondary)]">All caught up</span>
               <span className="text-[10px] text-[var(--text-tertiary)] mt-0.5">No upcoming items.</span>
@@ -109,3 +111,6 @@ export function CalendarRail({ tasks = [], events = [], onTaskClick, onEventClic
     </div>
   )
 }
+
+export const CalendarRail = React.memo(CalendarRailComponent)
+

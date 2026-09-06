@@ -13,11 +13,7 @@ import { PresenceHalo } from './PresenceHalo'
 import { CrewStatusPill } from './CrewStatusPill'
 import { cn } from '@/shared/lib/cn'
 
-function hashHue(str = '') {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  return Math.abs(hash) % 360
-}
+import { hashHue } from '@/shared/lib/avatar';
 
 export function CrewHeader({
   crew,
@@ -41,7 +37,7 @@ export function CrewHeader({
   // 1. Loading State (Tier 1 UX)
   if (isLoading) {
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-sm)] animate-pulse">
+      <div className="relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-sm)] animate-pulse">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-lg bg-[var(--bg-subtle)] shrink-0" />
@@ -66,7 +62,7 @@ export function CrewHeader({
   // 2. Empty / Uninitialized State Guard
   if (!crew) {
     return (
-      <div className="relative overflow-hidden rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-xs)]">
+      <div className="relative overflow-hidden rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-xs)]">
         <div className="flex flex-col items-center gap-3">
           <AlertTriangle className="w-8 h-8 text-[var(--warning)]" />
           <Heading level={3} className="text-[16px] font-semibold text-[var(--text-primary)]">
@@ -99,6 +95,7 @@ export function CrewHeader({
             onClick={() => navigate('/app/crews')}
             className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors shrink-0"
             title="Back to Crews"
+            aria-label="Back to crews"
           >
             <Icons.chevronLeft className="w-4 h-4" />
           </button>
@@ -122,7 +119,7 @@ export function CrewHeader({
               title={`Websocket: ${resolvedSocketStatus}`}
             >
               {resolvedSocketStatus === 'connected' && (
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--success)] opacity-75" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--success)] opacity-75" aria-hidden="true" />
               )}
             </span>
           </div>
@@ -162,7 +159,7 @@ export function CrewHeader({
                   <div className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--bg-subtle)] border border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-secondary)] cursor-default">
                     <span className="relative flex h-2 w-2">
                       {resolvedSocketStatus === 'connected' && (
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--success)] opacity-75" />
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--success)] opacity-75" aria-hidden="true" />
                       )}
                       <span
                         className={cn(
@@ -224,7 +221,7 @@ export function CrewHeader({
               <ChatIcon className="w-3 h-3" />
               <span>Discussion</span>
               {channels?.length > 0 && (
-                <span className="ml-0.5 rounded-full bg-[var(--accent-soft)] px-1.5 py-0.2 text-[10px] font-mono text-[var(--accent)] font-semibold">
+                <span className="ml-0.5 rounded-full bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] font-mono text-[var(--accent)] font-semibold">
                   {channels.length}
                 </span>
               )}

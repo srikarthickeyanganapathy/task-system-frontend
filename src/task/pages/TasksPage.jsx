@@ -23,6 +23,7 @@ import { TaskListSection } from '../components/TaskListSection'
 import { TaskBoardSection } from '../components/TaskBoardSection'
 import { TasksRail } from '../components/TasksRail'
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { useSEO } from '@/shared/seo';
 
 /* ============================================================
    pages/TasksPage.jsx -- org-wide tasks, triage first.
@@ -65,6 +66,13 @@ const SCOPES = [
 export function TasksPage() {
   const logic = useTasksPageLogic()
   const { confirm, dialog: confirmDialog } = useConfirmDialog()
+
+  useSEO({
+    title: 'Tasks',
+    description: 'Manage, organize, and prioritize team and personal tasks with real-time tracking.',
+    ogTitle: 'Tasks | Ryokai',
+    noindex: true,
+  })
   const navigate = useNavigate()
   const changeTaskStatus = useTaskStatusChange()
   const rejectTaskMutation = useRejectTask()

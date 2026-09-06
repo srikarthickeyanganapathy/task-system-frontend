@@ -20,8 +20,30 @@ export const useDashboardStats = (customParams = {}) => {
   return useQuery({
     queryKey: [...queryKeys.dashboard.stats(), rawScope, orgId, crewId],
     queryFn: () => dashboardApi.getDashboardStats({ ...(rawScope ? { scope: rawScope } : {}), orgId, crewId }),
-    staleTime: 30000,
+    staleTime: 60000,
+    placeholderData: (prev) => prev,
     enabled: isReady,
+  });
+};
+
+/**
+ * Prefetch dashboard / analytics stats into the query cache.
+ * Can be triggered on navigation hover or router transition.
+ */
+export const prefetchDashboardStats = (queryClient, customParams = {}) => {
+  if (!queryClient) return;
+
+  const rawScope = customParams.scope || 'PERSONAL';
+  const orgId = rawScope === 'ORG' ? customParams.orgId : undefined;
+  const crewId = rawScope === 'CREWS' ? customParams.crewId : undefined;
+
+  const isReady = (rawScope === 'ORG' ? !!orgId && orgId !== 'pending' : rawScope === 'CREWS' ? !!crewId && crewId !== 'pending' : true);
+  if (!isReady) return;
+
+  return queryClient.prefetchQuery({
+    queryKey: [...queryKeys.dashboard.stats(), rawScope, orgId, crewId],
+    queryFn: () => dashboardApi.getDashboardStats({ ...(rawScope ? { scope: rawScope } : {}), orgId, crewId }),
+    staleTime: 60000,
   });
 };
 

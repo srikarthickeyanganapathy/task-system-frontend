@@ -1,12 +1,23 @@
+import { useMemo } from 'react';
 import { Heading, Text } from '@/shared/ui/Typography';
 import { cn } from '@/shared/lib/cn';
 
 export function HeatmapMatrix({ rows, threshold, history }) {
-  const days = Array.from({ length: 14 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (13 - i));
-    return d;
-  });
+  const days = useMemo(() => {
+    if (history && Object.values(history).some(h => Array.isArray(h) && h.length > 0)) {
+      // Get dates from first user's history (all users share same date range)
+      const firstHistory = Object.values(history).find(h => Array.isArray(h) && h.length > 0);
+      if (firstHistory && firstHistory[0]?.date) {
+        return firstHistory.map(snap => new Date(snap.date + 'T00:00:00'));
+      }
+    }
+    // Fallback to last 14 days
+    return Array.from({ length: 14 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (13 - i));
+      return d;
+    });
+  }, [history]);
 
   const getCellColor = (value) => {
     if (value === 0) return 'bg-[var(--bg-subtle)]';
@@ -85,16 +96,23 @@ export function HeatmapMatrix({ rows, threshold, history }) {
                   </span>
                 </div>
                 <div className="grid grid-cols-14 gap-1">
+                  {userHistory.length === 0 && (
+                    <div className="col-span-14 flex items-center justify-center text-[10px] text-[var(--text-muted)] italic">
+                      History data accumulating...
+                    </div>
+                  )}
                   {userHistory.map((val, i) => {
-                    const prevVal = userHistory[i - 1] || 0;
-                    const diff = val - prevVal;
-                    const tooltip = `${val} active tasks on ${days[i].toLocaleDateString()}\n${diff > 0 ? '+' : ''}${diff} from yesterday`;
+                    const activeCount = val.activeCount !== undefined ? val.activeCount : val;
+                    const prevVal = userHistory[i - 1];
+                    const prevActiveCount = prevVal ? (prevVal.activeCount !== undefined ? prevVal.activeCount : prevVal) : 0;
+                    const diff = activeCount - prevActiveCount;
+                    const tooltip = `${activeCount} active tasks on ${days[i].toLocaleDateString()}\n${diff > 0 ? '+' : ''}${diff} from yesterday`;
                     return (
                       <div
                         key={i}
                         className={cn(
                           'h-6 rounded-[5px] transition-all hover:scale-110 hover:ring-1 hover:ring-[var(--accent)] cursor-pointer',
-                          getCellColor(val),
+                          getCellColor(activeCount),
                         )}
                         title={tooltip}
                       />

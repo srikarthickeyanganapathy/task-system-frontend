@@ -2,49 +2,22 @@
 // All presence/avatar/workload/highlight logic lives here so every
 // members view (card, table, drawer, header) uses the same rules.
 
-export const PRESENCE_CONFIG = {
-  active: {
-    label: 'Active',
-    dotBg: 'bg-[var(--success)]',
-    textColor: 'text-[var(--success)]',
-  },
-  offline: {
-    label: 'Offline',
-    dotBg: 'bg-[var(--text-tertiary)]',
-    textColor: 'text-[var(--text-muted)]',
-  },
-};
+import { hashHue, avatarColor } from '@/shared/lib/avatar';
+export { PRESENCE_CONFIG, getMemberInitial, getMemberPresence } from '@/shared/ui/MemberAvatar';
+
+export const COPY_FEEDBACK_MS = 2000;
+export { hashHue };
+
+// A single flat color per member, not a gradient -- quieter and easier to tell apart at a glance
+export function getAvatarColor(member) {
+  return avatarColor(member?.username || member?.email || '');
+}
 
 // Stable fallback timestamp -- module scope keeps render pure (React Compiler)
 const FALLBACK_NOW = Date.now();
 
-// Deterministic hue for a member's flat avatar color
-export function hashHue(str) {
-  return Math.abs((str || '').split('').reduce((acc, c) => c.charCodeAt(0) + ((acc << 5) - acc), 0)) % 360;
-}
-
 export function formatJoinDate(joinedAt, options) {
   return new Date(joinedAt || FALLBACK_NOW).toLocaleDateString(undefined, options);
-}
-
-export function getMemberInitial(member) {
-  return (member?.username || 'U').charAt(0).toUpperCase();
-}
-
-// A single flat color per member, not a gradient -- quieter and easier to tell apart at a glance
-export function getAvatarColor(member) {
-  const hue = hashHue(member?.username || member?.email || '');
-  return `hsl(${hue} 42% 45%)`;
-}
-
-export function getMemberPresence(member) {
-  if (!member) return 'offline';
-  if (member.isOnline !== undefined) return member.isOnline ? 'active' : 'offline';
-  if (member.presenceStatus) {
-    const status = String(member.presenceStatus).toLowerCase();
-    return status === 'active' || status === 'online' ? 'active' : 'offline';
-  }
-  return 'offline';
 }
 
 // Workload metrics based on assigned tasks. Returns a text color for the

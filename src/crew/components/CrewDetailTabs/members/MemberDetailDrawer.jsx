@@ -44,18 +44,30 @@ export function MemberDetailDrawer({ member, isOpen, onClose, workload, isCreato
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {/* Workload */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-lg font-medium text-[var(--text-primary)] tabular-nums">{workload.total}</div>
-              <Text variant="muted" size="xs">Total tasks</Text>
+          <div className="grid grid-cols-3 gap-3 p-3 bg-[var(--bg-subtle)] rounded-lg">
+            <div className="text-center">
+              <div className="text-lg font-semibold text-[var(--text-primary)] tabular-nums">{workload.total}</div>
+              <Text variant="muted" size="xs">Total</Text>
             </div>
-            <div>
-              <div className={cn('text-lg font-medium tabular-nums', workload.levelColor)}>{workload.active}</div>
-              <Text variant="muted" size="xs">In progress</Text>
+            <div className="text-center">
+              <div className={cn('text-lg font-semibold tabular-nums', workload.levelColor)}>{workload.active}</div>
+              <Text variant="muted" size="xs">Active</Text>
             </div>
-            <div>
-              <div className="text-lg font-medium text-[var(--success)] tabular-nums">{workload.completed}</div>
-              <Text variant="muted" size="xs">Completed</Text>
+            <div className="text-center">
+              <div className="text-lg font-semibold text-[var(--success)] tabular-nums">{workload.completed}</div>
+              <Text variant="muted" size="xs">Done</Text>
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
+              <span>Workload</span>
+              <span className={workload.levelColor}>{workload.level}</span>
+            </div>
+            <div className="h-1.5 bg-[var(--bg-subtle)] rounded-full overflow-hidden">
+              <div
+                className={cn('h-full rounded-full transition-all', workload.barColor)}
+                style={{ width: workload.active > 0 ? `${Math.min(100, (workload.active / 6) * 100)}%` : '0%' }}
+              />
             </div>
           </div>
 
@@ -98,7 +110,7 @@ export function MemberDetailDrawer({ member, isOpen, onClose, workload, isCreato
         {isCreator && !isOwner && (
           <div className="p-4 border-t border-[var(--border-subtle)] grid grid-cols-2 gap-2">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               className="w-full h-9 text-xs"
               onClick={() => {

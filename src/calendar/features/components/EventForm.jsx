@@ -11,7 +11,7 @@ import { Trash2 } from '@/shared/ui/Icons'
  * - Pass `defaultValues.id` to switch into edit mode (submit label + delete action).
  * - `onDelete` is required for the delete action to appear in edit mode.
  */
-export function EventForm({ onSubmit, onCancel, onDelete, isLoading, isDeleting, defaultValues }) {
+function EventFormComponent({ onSubmit, onCancel, onDelete, isLoading, isDeleting, defaultValues }) {
   const isEditing = !!defaultValues?.id
   const [form, setForm] = useState(defaultValues)
   const [error, setError] = useState(null)
@@ -43,10 +43,10 @@ export function EventForm({ onSubmit, onCancel, onDelete, isLoading, isDeleting,
         <Input placeholder="e.g., Conference Room B / Meet link" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="h-9 text-[13px]" />
       </div>
 
-      <div className="flex items-center justify-between p-3 bg-[var(--bg-subtle)]/50 rounded-lg border border-[var(--border-subtle)]">
+      <div className="flex items-center justify-between p-3 bg-[var(--bg-subtle)]/50 rounded-xl border border-[var(--border-subtle)]">
         <div>
           <Label className="text-[12px] font-medium">All day event</Label>
-          <Text variant="muted" className="text-[11px] mt-0.5">Does not have a specific start or end time</Text>
+          <Text variant="secondary" className="text-[11px] mt-0.5 text-[var(--text-tertiary)]">Does not have a specific start or end time</Text>
         </div>
         <Switch checked={form.isAllDay} onCheckedChange={(checked) => { setForm({ ...form, isAllDay: checked }); setError(null) }} />
       </div>
@@ -87,3 +87,6 @@ export function EventForm({ onSubmit, onCancel, onDelete, isLoading, isDeleting,
     </form>
   )
 }
+
+export const EventForm = React.memo(EventFormComponent)
+

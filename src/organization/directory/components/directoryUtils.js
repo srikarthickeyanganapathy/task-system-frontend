@@ -1,12 +1,12 @@
-// --- Directory Utility Helpers ---
-// Shared formatting/activity helpers extracted from DirectoryPage.
-// Used by DirectoryPage, MemberCardGrid, MemberCompareModal, RecentActivityFeed.
+import { hashHue, avatarColor } from '@/shared/lib/avatar';
 
-export function hashHue(str = '') {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  return Math.abs(hash) % 360;
-}
+export const GLASS_PANEL =
+  'bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] backdrop-saturate-[var(--glass-saturate)] border border-[var(--glass-border)] shadow-[var(--shadow-md)]';
+
+export const GLASS_FLOATING =
+  'bg-[var(--glass-bg-strong)] backdrop-blur-2xl backdrop-saturate-[var(--glass-saturate)] border border-[var(--glass-border)] shadow-[var(--shadow-lg)]';
+
+export { hashHue, avatarColor };
 
 export function timeAgo(date) {
   if (!date) return null;
@@ -41,4 +41,4 @@ export function hasRecentActivity(memberTasksMap, userId, hours = 24) {
   const tasks = memberTasksMap[userId] || [];
   const threshold = Date.now() - hours * 60 * 60 * 1000;
   return tasks.some(t => t.updatedAt && new Date(t.updatedAt).getTime() >= threshold);
-}
+}
