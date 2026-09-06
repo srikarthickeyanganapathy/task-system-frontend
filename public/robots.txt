@@ -1,7 +1,31 @@
+# Production robots.txt for Ryokai (https://ryokai-dev.vercel.app)
 User-agent: *
 Allow: /
+Allow: /landing
+Allow: /login
+Allow: /register
+Allow: /forgot-password
+Disallow: /app/
+Disallow: /platform/
+Disallow: /oauth/
+Disallow: /invite/
 
-# Explicitly allow social media crawlers
+# Explicitly allow major search crawlers
+User-agent: Googlebot
+Allow: /
+Allow: /landing
+Disallow: /app/
+Disallow: /platform/
+Disallow: /oauth/
+
+User-agent: Bingbot
+Allow: /
+Allow: /landing
+Disallow: /app/
+Disallow: /platform/
+Disallow: /oauth/
+
+# Explicitly allow social media card unfurlers
 User-agent: Twitterbot
 Allow: /
 
@@ -15,6 +39,9 @@ User-agent: Slackbot
 Allow: /
 
 User-agent: Discordbot
+Allow: /
+
+User-agent: Applebot
 Allow: /
 
 Sitemap: https://ryokai-dev.vercel.app/sitemap.xml

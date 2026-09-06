@@ -12,6 +12,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/Avatar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/shared/ui/Popover';
 import { Separator } from '@/shared/ui/Separator';
 import { useHelpCenterStore } from '@/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
+import { prefetchNotes } from '@/note';
+import { prefetchDashboardStats } from '@/analytics';
+import { prefetchCalendarEvents } from '@/calendar';
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import {
   LayoutDashboard, Inbox, CheckSquare, FolderClosed, Zap,
   Calendar, Pencil, BarChart2, Bookmark, Users, Building2,
@@ -184,6 +189,38 @@ export function AppSidebar({ isOpen, onClose }) {
 
   const isSettings = location.pathname.startsWith('/app/settings');
   const inCrew = location.pathname.startsWith('/app/crews/') && location.pathname !== '/app/crews';
+  const qc = useQueryClient();
+
+  const handlePrefetch = (to) => {
+    if (to === '/app/notes') {
+      const noteScope = workspaceMode === 'ORG' && activeOrganization?.id
+        ? { orgId: activeOrganization.id }
+        : workspaceMode === 'CREWS' && activeCrew?.id
+        ? { crewId: activeCrew.id }
+        : {};
+      prefetchNotes(qc, noteScope);
+      import('@/note/pages/NotesPage');
+    } else if (to === '/app/analytics') {
+      const statsParams = workspaceMode === 'ORG'
+        ? { scope: 'ORG', orgId: activeOrganization?.id }
+        : workspaceMode === 'CREWS'
+        ? { scope: 'CREWS', crewId: activeCrew?.id }
+        : { scope: 'PERSONAL' };
+      prefetchDashboardStats(qc, statsParams);
+      import('@/analytics/pages/AnalyticsPage');
+    } else if (to === '/app/calendar') {
+      const calScope = workspaceMode === 'ORG' && activeOrganization?.id
+        ? { orgId: activeOrganization.id }
+        : workspaceMode === 'CREWS' && activeCrew?.id
+        ? { crewId: activeCrew.id }
+        : {};
+      const now = new Date();
+      const start = startOfWeek(startOfMonth(now)).toISOString();
+      const end = endOfWeek(endOfMonth(now)).toISOString();
+      prefetchCalendarEvents(qc, start, end, calScope);
+      import('@/calendar/pages/CalendarPage');
+    }
+  };
 
   // Navigation sections
   const workspaceNav = {
@@ -286,7 +323,12 @@ export function AppSidebar({ isOpen, onClose }) {
             {(workspaceNav[workspaceMode] || workspaceNav.PERSONAL).map(item => (
               <React.Fragment key={item.to}>
                 {item.section && <SectionDivider isExpanded={isExpanded} label={item.section} />}
-                <SidebarNavItem {...item} isExpanded={isExpanded} />
+                <SidebarNavItem
+                  {...item}
+                  isExpanded={isExpanded}
+                  onMouseEnter={() => handlePrefetch(item.to)}
+                  onFocus={() => handlePrefetch(item.to)}
+                />
               </React.Fragment>
             ))}
 
@@ -325,7 +367,13 @@ export function AppSidebar({ isOpen, onClose }) {
             {/* Tools */}
             <SectionDivider isExpanded={isExpanded} label={isExpanded ? 'Tools' : undefined} />
             {(toolsNav[workspaceMode] || toolsNav.PERSONAL).map(item => (
-              <SidebarNavItem key={item.to} {...item} isExpanded={isExpanded} />
+              <SidebarNavItem
+                key={item.to}
+                {...item}
+                isExpanded={isExpanded}
+                onMouseEnter={() => handlePrefetch(item.to)}
+                onFocus={() => handlePrefetch(item.to)}
+              />
             ))}
 
             {/* Admin section */}

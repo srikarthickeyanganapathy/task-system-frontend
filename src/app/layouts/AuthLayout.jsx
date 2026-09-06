@@ -79,7 +79,7 @@ export function AuthLayout() {
       </aside>
 
       {/* RIGHT SIDE -- form stage */}
-      <main className="relative flex flex-1 flex-col overflow-hidden bg-[var(--bg-base)]">
+      <main id="main-content" tabIndex={-1} className="relative flex flex-1 flex-col overflow-hidden bg-[var(--bg-base)]">
         {/* Faint starfield ties the form side to the brand panel */}
         <CosmicBackground variant="hero" opacity={0.1} />
 

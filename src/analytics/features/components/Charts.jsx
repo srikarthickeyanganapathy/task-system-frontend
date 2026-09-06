@@ -72,7 +72,7 @@ const STATUS_COLOR_MAP = {
  * Area chart tracking daily task completions.
  * Fixed height: h-[460px] with rounded-2xl to match PriorityChart.
  */
-export function CompletionChart({ data = [] }) {
+export const CompletionChart = React.memo(function CompletionChart({ data = [] }) {
   const [rangeDays, setRangeDays] = useState(30) // 7 | 14 | 30
 
   // Filter dataset to selected range window
@@ -219,14 +219,14 @@ export function CompletionChart({ data = [] }) {
       </CardContent>
     </Card>
   )
-}
+})
 
 /**
  * PriorityChart
  * Interactive Status Breakdown Donut Chart.
  * Fixed height: h-[460px] with rounded-2xl to match CompletionChart.
  */
-export function PriorityChart({ data = [] }) {
+export const PriorityChart = React.memo(function PriorityChart({ data = [] }) {
   const [hoveredIndex, setHoveredIndex] = useState(null)
 
   const defaultPalette = ['#FFC107', '#17A2B8', '#3E9D6F', '#E0546B', '#6B5F72']
@@ -417,4 +417,4 @@ export function PriorityChart({ data = [] }) {
       </CardContent>
     </Card>
   )
-}
+})

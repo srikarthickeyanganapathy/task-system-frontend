@@ -16,6 +16,7 @@ import { PageState } from '@/shared/ui/PageState'
 import { InsightSection } from '@/shared/workspace-framework'
 import { useWorkspace } from '@/app/providers/WorkspaceProvider'
 import { cn } from '@/shared/lib/cn'
+import { useSEO } from '@/shared/seo'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -78,6 +79,13 @@ function AnalyticsSkeleton() {
 export function AnalyticsPage() {
   const navigate = useNavigate()
   const { workspaceMode, activeOrganization, activeCrew } = useWorkspace()
+
+  useSEO({
+    title: 'Analytics & Velocity',
+    description: 'Comprehensive workspace metrics, completion trends, velocity, and stage breakdowns.',
+    ogTitle: 'Analytics | Ryokai',
+    noindex: true,
+  })
 
   // Stats follow the workspace lens: ORG -> org scope, CREWS -> active crew,
   // otherwise strictly personal. No cross-mode data mixing.

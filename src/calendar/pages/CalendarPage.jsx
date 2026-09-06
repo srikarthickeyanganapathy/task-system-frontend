@@ -85,7 +85,7 @@ export function CalendarPage() {
         </div>
 
         <Modal open={!!selectedEvent || !!editingEvent} onOpenChange={(open) => !open && closeEventModal()}>
-          <ModalContent className="sm:max-w-sm !bg-[var(--bg-card)] !backdrop-blur-none border border-[var(--border-subtle)] shadow-xl rounded-xl p-6">
+          <ModalContent className="sm:max-w-md !bg-[var(--bg-card)] !backdrop-blur-none border border-[var(--border-subtle)] shadow-xl rounded-2xl p-6">
             {editingEvent ? (
               <EventForm
                 key={editingEvent.id}
@@ -121,10 +121,10 @@ export function CalendarPage() {
                   </div>
                 )}
                 <div className="flex justify-end gap-2 pt-3 border-t border-[var(--border-subtle)]">
-                  <Button variant="outline" size="sm" className="h-8 text-[12px] text-[var(--danger)] hover:bg-[var(--danger-soft)]" onClick={() => handleDeleteEvent(selectedEvent)}>
+                  <Button variant="outline" size="sm" className="h-8 text-[12px] text-[var(--danger)] hover:bg-[var(--danger-soft)] focus-visible:ring-2 focus-visible:ring-[var(--danger)]" onClick={() => handleDeleteEvent(selectedEvent)}>
                     Delete
                   </Button>
-                  <Button size="sm" className="h-8 text-[12px] gap-1.5" onClick={() => { setEditingEvent(selectedEvent); setSelectedEvent(null) }}>
+                  <Button size="sm" className="h-8 text-[12px] gap-1.5 focus-visible:ring-2 focus-visible:ring-[var(--accent)]" onClick={() => { setEditingEvent(selectedEvent); setSelectedEvent(null) }}>
                     <Edit3 className="w-3.5 h-3.5" /> Edit
                   </Button>
                 </div>

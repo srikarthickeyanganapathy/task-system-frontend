@@ -9,18 +9,24 @@ function pulseDots(count) {
   const tiers = count >= 3 ? [6, 5, 4] : count === 2 ? [4, 4] : [4]
   tiers.forEach((size, i) => {
     const opacity = count >= 3 ? [0.95, 0.7, 0.45][i] : count === 2 ? (i === 0 ? 0.85 : 0.5) : 0.6
-    dots.push(<i key={i} className="block rounded-full bg-[var(--accent)]" style={{ width: size, height: size, opacity }} />)
+    dots.push(<i key={i} aria-hidden="true" className="block rounded-full bg-[var(--accent)]" style={{ width: size, height: size, opacity }} />)
   })
   return dots
 }
 
-function CalendarDayCell({ day, isCurrentMonth, count, isSelected, onSelectDay }) {
+const CalendarDayCell = React.memo(function CalendarDayCell({ day, isCurrentMonth, count, isSelected, onSelectDay }) {
   const today = isToday(day)
+  const accessibleLabel = `${format(day, 'EEEE, MMMM d, yyyy')}${count ? `, ${count} scheduled item${count > 1 ? 's' : ''}` : ', no items scheduled'}`
+
   return (
     <button
+      type="button"
       onClick={() => onSelectDay && onSelectDay(day)}
+      aria-label={accessibleLabel}
+      aria-pressed={isSelected}
+      aria-current={today ? 'date' : undefined}
       className={cn(
-        "relative flex flex-col items-center justify-center gap-[3px] h-[44px] rounded-[10px] border border-transparent transition-all cursor-pointer hover:bg-[var(--bg-hover)]",
+        "relative flex flex-col items-center justify-center gap-[3px] h-[44px] rounded-[10px] border border-transparent transition-all cursor-pointer hover:bg-[var(--bg-hover)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]",
         !isCurrentMonth && "opacity-30",
         isSelected && "bg-[var(--accent-soft)] border-[var(--accent-border)]"
       )}
@@ -38,14 +44,14 @@ function CalendarDayCell({ day, isCurrentMonth, count, isSelected, onSelectDay }
           {format(day, 'd')}
         </span>
       </div>
-      <div className="flex items-center gap-[2.5px] h-[6px]">
+      <div className="flex items-center gap-[2.5px] h-[6px]" aria-hidden="true">
         {pulseDots(count)}
       </div>
     </button>
   )
-}
+})
 
-export function MonthView({ tasks = [], events = [], currentDate, isLoading, onSelectDay, selectedDay }) {
+function MonthViewComponent({ tasks = [], events = [], currentDate, isLoading, onSelectDay, selectedDay }) {
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(currentDate))
     const end = endOfWeek(endOfMonth(currentDate))
@@ -132,4 +138,7 @@ export function MonthView({ tasks = [], events = [], currentDate, isLoading, onS
     </div>
   )
 }
+
+export const MonthView = React.memo(MonthViewComponent)
+
 

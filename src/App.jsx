@@ -11,6 +11,7 @@ import { PublicRoute } from "@/app/router/PublicRoute";
 import { RouteResolver } from "@/app/router/RouteResolver";
 import { SessionExpiredListener } from "@/app/router/SessionExpiredListener";
 import { RouteAnnouncer } from "@/app/router/RouteAnnouncer";
+import { RouteSEO } from "@/app/router/RouteSEO";
 import { MainLayout } from "@/app/layouts/MainLayout";
 import { PlatformLayout } from "@/app/layouts/PlatformLayout";
 import { PlatformPageGuard } from "@/platform/admin/components/PlatformGuard";
@@ -121,6 +122,7 @@ export default function App() {
             </Routes>
             <SessionExpiredListener />
             <RouteAnnouncer />
+            <RouteSEO />
           </Router>
         </AppProvider>
       </InspectorProvider>

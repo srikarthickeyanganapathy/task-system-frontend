@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, useRef, useDeferredValue } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { format, isToday, isSameDay } from 'date-fns'
 import {
@@ -20,6 +20,7 @@ import { PageState } from '@/shared/ui/PageState'
 import { useConfirmDialog } from '@/shared/ui/ConfirmDialog'
 import { InteractiveCard } from '@/shared/ui/InteractiveCard'
 import { useWorkspace } from '@/app/providers/WorkspaceProvider'
+import { useSEO } from '@/shared/seo'
 
 const COLOR_THEMES = {
   default: {
@@ -314,8 +315,9 @@ function CaptureStrip({ onCreate, isCreating }) {
 /**
  * NoteCard Component
  * Equalized height, structured flex layout, pinned footer with tags, and clean integrated pin badge.
+ * Memoized to eliminate unnecessary re-renders during filter, sort, or typing updates.
  */
-function NoteCard({ note, onOpen, onDelete, onTogglePin, isPinnedSection, onSelectTag }) {
+const NoteCard = React.memo(function NoteCard({ note, onOpen, onDelete, onTogglePin, isPinnedSection, onSelectTag }) {
   const theme = COLOR_THEMES[note.color] || COLOR_THEMES.default
   const dna = noteDna(note)
   const updatedDate = useMemo(() => {
@@ -464,13 +466,14 @@ function NoteCard({ note, onOpen, onDelete, onTogglePin, isPinnedSection, onSele
       </div>
     </InteractiveCard>
   )
-}
+})
 
 /**
  * StreamDay Component
  * Responsive timeline without brittle hardcoded pixel positions.
+ * Memoized to avoid timeline re-renders when other days or notes change.
  */
-function StreamDay({ group, onOpen, onDelete, onTogglePin }) {
+const StreamDay = React.memo(function StreamDay({ group, onOpen, onDelete, onTogglePin }) {
   const words = group.notes.reduce((acc, n) => acc + (noteDna(n).words || 0), 0)
 
   return (
@@ -558,7 +561,7 @@ function StreamDay({ group, onOpen, onDelete, onTogglePin }) {
       </div>
     </div>
   )
-}
+})
 
 function NoteSkeleton() {
   return (
@@ -665,6 +668,13 @@ export function NotesPage() {
   const scope = useNoteScope()
   const { workspaceMode, activeOrganization, activeCrew } = useWorkspace()
 
+  useSEO({
+    title: 'Notes & Documentation',
+    description: 'Capture ideas, draft specs, manage checklists, and organize workspace documentation.',
+    ogTitle: 'Notes | Ryokai',
+    noindex: true,
+  })
+
   const { data: notes = [], isLoading } = useNotes(scope)
   const deleteNote = useDeleteNote()
   const updateNote = useUpdateNote()
@@ -672,6 +682,8 @@ export function NotesPage() {
   const { confirm, dialog } = useConfirmDialog()
 
   const [searchQuery, setSearchQuery] = useState('')
+  // React 19 deferred value for 60fps input responsiveness
+  const deferredSearchQuery = useDeferredValue(searchQuery)
   const [selectedTag, setSelectedTag] = useState(null)
   const [sortBy, setSortBy] = useState('updated')
   const [showSortMenu, setShowSortMenu] = useState(false)
@@ -684,7 +696,7 @@ export function NotesPage() {
     setSearchParams(params => { params.set('view', mode); return params }, { replace: true })
   }
 
-  const handleDeleteNote = async (e, noteId) => {
+  const handleDeleteNote = useCallback(async (e, noteId) => {
     e.stopPropagation()
     const confirmed = await confirm({
       title: 'Delete Note?',
@@ -693,11 +705,13 @@ export function NotesPage() {
       confirmLabel: 'Delete Note',
     })
     if (confirmed) deleteNote.mutate(noteId)
-  }
+  }, [confirm, deleteNote])
 
-  const handleCreate = (payload) => createNote.mutate(payload)
-  const openNew = () => { setActiveNote(null); setIsPanelOpen(true) }
-  const openEdit = (note) => { setActiveNote(note); setIsPanelOpen(true) }
+  const handleCreate = useCallback((payload) => createNote.mutate(payload), [createNote])
+  const openNew = useCallback(() => { setActiveNote(null); setIsPanelOpen(true) }, [])
+  const openEdit = useCallback((note) => { setActiveNote(note); setIsPanelOpen(true) }, [])
+  const togglePin = useCallback((note) => updateNote.mutate({ id: note.id, payload: { ...note, isPinned: !note.isPinned } }), [updateNote])
+  const handleSelectTag = useCallback((t) => setSelectedTag(t), [])
 
   const closePanel = () => {
     setIsPanelOpen(false)
@@ -717,8 +731,6 @@ export function NotesPage() {
     }
   }, [openNoteId, notes, activeNote])
 
-  const togglePin = (note) => updateNote.mutate({ id: note.id, payload: { ...note, isPinned: !note.isPinned } })
-
   // Extract all unique tags in the current notebook
   const allTags = useMemo(() => {
     const set = new Set()
@@ -732,14 +744,14 @@ export function NotesPage() {
     return Array.from(set).sort()
   }, [notes])
 
-  // Filter notes by search query and active tag
+  // Filter notes by deferred search query and active tag for non-blocking 60fps search
   const filteredNotes = useMemo(() => {
+    const q = deferredSearchQuery.trim().toLowerCase()
     return notes.filter(n => {
       // Tag filter
       if (selectedTag && !(n.tags || []).includes(selectedTag)) return false
       // Search filter
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase()
+      if (q) {
         const matchesTitle = n.title?.toLowerCase().includes(q)
         const matchesContent = n.content?.toLowerCase().includes(q)
         const matchesTags = (n.tags || []).some(t => t.toLowerCase().includes(q))
@@ -747,7 +759,7 @@ export function NotesPage() {
       }
       return true
     })
-  }, [notes, searchQuery, selectedTag])
+  }, [notes, deferredSearchQuery, selectedTag])
 
   const sortedNotes = useMemo(() => {
     const sorted = [...filteredNotes]
@@ -999,7 +1011,7 @@ export function NotesPage() {
                         onOpen={openEdit}
                         onDelete={handleDeleteNote}
                         onTogglePin={togglePin}
-                        onSelectTag={(t) => setSelectedTag(t)}
+                        onSelectTag={handleSelectTag}
                         isPinnedSection
                       />
                     ))}
@@ -1031,7 +1043,7 @@ export function NotesPage() {
                         onOpen={openEdit}
                         onDelete={handleDeleteNote}
                         onTogglePin={togglePin}
-                        onSelectTag={(t) => setSelectedTag(t)}
+                        onSelectTag={handleSelectTag}
                         isPinnedSection={false}
                       />
                     ))}
