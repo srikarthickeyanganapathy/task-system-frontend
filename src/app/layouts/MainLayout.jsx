@@ -1,6 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useQueryClient } from '@tanstack/react-query'
+import { useWorkspace } from '@/app/providers/WorkspaceProvider'
+import { prefetchNotes } from '@/note'
+import { prefetchDashboardStats } from '@/analytics'
+import { prefetchCalendarEvents } from '@/calendar'
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns'
 import { AppSidebar, AppTopbar, GlobalCommandPalette } from '@/platform/workspace'
 import { WorkspaceInspector } from "@/shared/workspace-framework/interactions/inspector/WorkspaceInspector"
 import { useShortcuts } from "@/shared/hooks/useShortcuts"
@@ -28,6 +34,38 @@ const DRAWER_REGISTRY = {
 export function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
+  const qc = useQueryClient()
+  const { workspaceMode, activeOrganization, activeCrew } = useWorkspace()
+
+  // Background idle prefetch for Analytics and Notes on router transitions
+  useEffect(() => {
+    const idleCallback = typeof requestIdleCallback === 'function' ? requestIdleCallback : (cb) => setTimeout(cb, 400);
+    const cancelCallback = typeof cancelIdleCallback === 'function' ? cancelIdleCallback : clearTimeout;
+
+    const handle = idleCallback(() => {
+      const noteScope = workspaceMode === 'ORG' && activeOrganization?.id
+        ? { orgId: activeOrganization.id }
+        : workspaceMode === 'CREWS' && activeCrew?.id
+        ? { crewId: activeCrew.id }
+        : {};
+
+      const statsParams = workspaceMode === 'ORG'
+        ? { scope: 'ORG', orgId: activeOrganization?.id }
+        : workspaceMode === 'CREWS'
+        ? { scope: 'CREWS', crewId: activeCrew?.id }
+        : { scope: 'PERSONAL' };
+
+      const now = new Date();
+      const calStart = startOfWeek(startOfMonth(now)).toISOString();
+      const calEnd = endOfWeek(endOfMonth(now)).toISOString();
+
+      prefetchNotes(qc, noteScope);
+      prefetchDashboardStats(qc, statsParams);
+      prefetchCalendarEvents(qc, calStart, calEnd, noteScope);
+    });
+
+    return () => cancelCallback(handle);
+  }, [location.pathname, workspaceMode, activeOrganization?.id, activeCrew?.id, qc]);
 
   // Global keyboard shortcuts
   useShortcuts()

@@ -4,7 +4,7 @@ import { Button } from '@/shared/ui/Button'
 import { Plus, MapPin, Sparkles } from '@/shared/ui/Icons'
 import { cn } from '@/shared/lib/cn'
 
-function AgendaItem({ item, onClick }) {
+const AgendaItem = React.memo(function AgendaItem({ item, onClick }) {
   const isEvent = item.__type === 'event'
   const date = parseISO(isEvent ? item.startTime : item.dueDate)
   
@@ -14,9 +14,10 @@ function AgendaItem({ item, onClick }) {
 
   return (
     <button
+      type="button"
       onClick={() => onClick(item)}
       className={cn(
-        "group relative flex items-start gap-3.5 px-5 py-3.5 border-b border-[var(--border-subtle)] transition-colors cursor-pointer text-left w-full hover:bg-[var(--bg-hover)]",
+        "group relative flex items-start gap-3.5 px-5 py-3.5 border-b border-[var(--border-subtle)] transition-colors cursor-pointer text-left w-full hover:bg-[var(--bg-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:z-10",
         "last:border-b-0"
       )}
     >
@@ -67,9 +68,9 @@ function AgendaItem({ item, onClick }) {
       </div>
     </button>
   )
-}
+})
 
-export function AgendaList({ tasks = [], events = [], selectedDay, onTaskClick, onEventClick, onAddClick }) {
+function AgendaListComponent({ tasks = [], events = [], selectedDay, onTaskClick, onEventClick, onAddClick }) {
   const brief = useMemo(() => {
     if (!selectedDay) return []
     const pendingTasks = tasks.filter(t => t.dueDate && t.status !== 'Done').map(t => ({ ...t, __type: 'task' }))
@@ -88,12 +89,12 @@ export function AgendaList({ tasks = [], events = [], selectedDay, onTaskClick, 
         <div className="text-[15px] font-bold tracking-tight text-[var(--text-primary)] flex items-baseline gap-2">
           {format(selectedDay, 'eeee, MMMM d')}
           <span className="font-mono text-[10px] text-[var(--text-tertiary)] font-medium">
-            {format(selectedDay, 'yyyy-MM-dd')}   {brief.length} item{brief.length !== 1 ? 's' : ''}
+            {format(selectedDay, 'yyyy-MM-dd')} · {brief.length} item{brief.length !== 1 ? 's' : ''}
           </span>
         </div>
         <Button 
           onClick={() => onAddClick(selectedDay)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11.5px] font-semibold text-[var(--accent)] bg-[var(--accent-soft)] border border-[var(--accent-border)] hover:bg-[var(--accent-border)] transition-colors h-auto"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11.5px] font-semibold text-[var(--accent)] bg-[var(--accent-soft)] border border-[var(--accent-border)] hover:bg-[var(--accent-border)] transition-colors h-auto focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
         >
           <Plus className="w-3 h-3" /> Add
         </Button>
@@ -109,7 +110,7 @@ export function AgendaList({ tasks = [], events = [], selectedDay, onTaskClick, 
               The day is clear
             </div>
             <div className="text-[11.5px] text-[var(--text-tertiary)] mt-1 font-mono">
-              No items scheduled   {format(selectedDay, 'yyyy-MM-dd')}
+              No items scheduled · {format(selectedDay, 'yyyy-MM-dd')}
             </div>
           </div>
         ) : (
@@ -125,3 +126,6 @@ export function AgendaList({ tasks = [], events = [], selectedDay, onTaskClick, 
     </section>
   )
 }
+
+export const AgendaList = React.memo(AgendaListComponent)
+

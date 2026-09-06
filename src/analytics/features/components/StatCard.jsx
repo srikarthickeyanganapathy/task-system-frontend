@@ -14,7 +14,7 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
  * - tone="active"    -> indicates active work (in-progress)
  * - progress         -> optional completion percentage (0-100) rendered as a smooth bar
  */
-export function StatCard({
+export const StatCard = React.memo(function StatCard({
   title,
   value,
   description,
@@ -143,4 +143,4 @@ export function StatCard({
       </CardContent>
     </Card>
   )
-}
+})

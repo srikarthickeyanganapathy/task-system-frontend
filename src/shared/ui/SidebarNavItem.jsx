@@ -23,13 +23,15 @@ export const ICONS = {
   star: Star
 };
 
-export function SidebarNavItem({ to, icon, label, isExpanded, end = false, badge, onClick, avatarLetter }) {
+export function SidebarNavItem({ to, icon, label, isExpanded, end = false, badge, onClick, onMouseEnter, onFocus, avatarLetter }) {
   const IconComp = typeof icon === 'string' ? ICONS[icon] : icon;
   return (
     <NavLink
       to={to}
       end={end}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onFocus={onFocus}
       title={!isExpanded ? label : undefined}
       aria-label={label}
       className={({ isActive }) => cn(
