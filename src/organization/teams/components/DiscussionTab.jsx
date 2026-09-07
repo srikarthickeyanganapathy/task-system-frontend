@@ -300,7 +300,7 @@ export function DiscussionTab({
               </div>
             </div>
           )}
-          {isReadOnly && <p className="text-[11px] text-[var(--text-muted)] px-3 pb-2">You're an observer -- read only.</p>}
+          {isReadOnly && <p className="text-[11px] text-[var(--text-muted)] px-3 pb-2">You're an observer ? read only.</p>}
         </div>
       )}
 

@@ -107,7 +107,7 @@ export function TeamTile({ team, stats, isMember, orgId, canManage, canManageTea
             <span className="text-[11px] text-[var(--text-muted)]">{memberCount} member{memberCount === 1 ? '' : 's'}</span>
             {canEnterTeam && !compareMode && (
               <span className="text-[11px] font-semibold flex items-center gap-1 transition-colors" style={{ color: isHovered ? `hsl(${hue} 70% 50%)` : 'var(--text-muted)' }}>
-                <motion.span animate={{ x: isHovered ? 2 : 0 }} transition={{ duration: 0.2 }}>-></motion.span>
+                <motion.span animate={{ x: isHovered ? 2 : 0 }} transition={{ duration: 0.2 }}><Icons.arrowRight className="w-3.5 h-3.5" aria-label="Open team" /></motion.span>
               </span>
             )}
           </div>

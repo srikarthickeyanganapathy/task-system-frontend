@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/shared/lib/cn'
 import { AnimatedCounter } from './primitives'
+import { TrendingDown, TrendingUp, Minus } from '@/shared/ui/Icons'
 
 /* ===
  * STAT KPI CARD (extracted from TeamsPage)
@@ -43,7 +44,7 @@ export function StatKPI({ icon: Icon, label, value, suffix, trend, trendLabel, c
                     : 'text-[var(--text-muted)] bg-[var(--bg-subtle)]'
               )}
             >
-              <span>{trend > 0 ? ' ' : trend < 0 ? ' ' : '->'}</span>
+              {trend > 0 ? <TrendingUp className="w-3 h-3" aria-label="Increasing" /> : trend < 0 ? <TrendingDown className="w-3 h-3" aria-label="Decreasing" /> : <Minus className="w-3 h-3" aria-label="No change" />}
               <span>{Math.abs(trend)}%</span>
             </span>
           ) : null}

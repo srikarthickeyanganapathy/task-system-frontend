@@ -275,7 +275,7 @@ export default function CrewRepoSharingPanel({ crewId, projectId, linkedRepos = 
         <div className="mt-3.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-subtle)]/40 px-3.5 py-3 flex flex-wrap items-center justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[12.5px] font-medium text-[var(--text-primary)]">Connect your GitHub to share repos</p>
-            <p className="text-[11.5px] text-[var(--text-muted)]">You can only share repositories you own -- connect to get started.</p>
+            <p className="text-[11.5px] text-[var(--text-muted)]">You can only share repositories you own ? connect to get started.</p>
           </div>
           <Button size="sm" className="shrink-0 gap-1.5" onClick={() => connect.mutate()} isLoading={connect.isPending}>
             <Github className="w-3.5 h-3.5" /> Connect

@@ -135,7 +135,7 @@ export default function HowItWorksSection() {
             <span className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0"><ImageIcon size={18} strokeWidth={1.7} /></span>
             <div>
               <h4 className="text-[15px] font-semibold mb-1">Evidence-backed execution</h4>
-              <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed">Six typed evidence kinds -- LINK, GITHUB, SCREENSHOT, RECORDING, SNIPPET, NOTE -- ensure decisions are backed by real work, not empty comments.</p>
+              <p className="text-[13px] text-[var(--text-tertiary)] leading-relaxed">Six typed evidence kinds ? LINK, GITHUB, SCREENSHOT, RECORDING, SNIPPET, NOTE ? ensure decisions are backed by real work, not empty comments.</p>
             </div>
           </motion.div>
           <motion.div variants={itemVariants} className="flex gap-4 p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-subtle)]/50">

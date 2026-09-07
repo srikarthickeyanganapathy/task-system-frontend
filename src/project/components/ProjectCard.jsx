@@ -5,6 +5,7 @@ import { Badge } from '@/shared/ui/Badge'
 import { InteractiveCard } from '@/shared/ui/InteractiveCard'
 import { calculateHealthScore, getHealthStatus, formatRelativeDate } from '../features/utils/projectUtils'
 import { cn } from '@/shared/lib/cn'
+import { ArrowRight } from "../../shared/ui/Icons";
 
 export function ProjectCard({ project }) {
   const { id, name, description, progress = 0, tasksTotal = 0, tasksCompleted = 0, dueDate, status, teamName, organizationName } = project
@@ -108,7 +109,7 @@ export function ProjectCard({ project }) {
             className="text-[10px] font-medium text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors px-2 py-1 rounded-md hover:bg-[var(--bg-subtle)]"
             title="Open full project"
           >
-            ->
+            <ArrowRight />
           </button>
         </div>
       </InteractiveCard>

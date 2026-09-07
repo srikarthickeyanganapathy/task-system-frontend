@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import ExplorerNavBar from './ExplorerNavBar'
 import { Heading, Text } from '@/shared/ui/Typography'
 import { Badge } from '@/shared/ui/Badge'
-import { ArrowDown, ArrowUp, Calendar, Flag, User, CheckCircle, Paperclip, MessageSquare, Zap, Route, Target } from '@/shared/ui/Icons'
+import { ArrowDown, ArrowUp, ArrowRight, Calendar, Flag, User, CheckCircle, Paperclip, MessageSquare, Zap, Route, Target } from '@/shared/ui/Icons'
 import { cn } from '@/shared/lib/cn'
 
 const PRIORITY_STYLE = {
@@ -138,7 +138,7 @@ export default function TaskWorkspace({ context, navigator, analysis, onCenterOn
           onClick={() => onOpenWorkbench(currentTask)}
           className="w-full py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-200 text-xs font-semibold transition-colors cursor-pointer"
         >
-          Edit in Workbench ->
+          <span className="inline-flex items-center gap-1.5">Edit in Workbench <ArrowRight size={14} aria-hidden="true" /></span>
         </button>
       )}
     </div>

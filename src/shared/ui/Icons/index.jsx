@@ -255,6 +255,7 @@ export const Icons = {
   workspace: Building2,
   plus: Plus,
   play: Play,
+  minus: Minus,
   spinner: Loader2,
   trash2: Trash2,
   shield: Shield,

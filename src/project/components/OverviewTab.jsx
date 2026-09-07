@@ -238,7 +238,7 @@ export function OverviewTab({
             <Activity className="w-4 h-4 text-[var(--accent)]" strokeWidth={1.75} /> Recent Activity
           </div>
           {activities.length === 0 ? (
-            <p className="text-[11.5px] text-[var(--text-muted)] py-1">No activity yet -- actions will stream in here.</p>
+            <p className="text-[11.5px] text-[var(--text-muted)] py-1">No activity yet ? actions will stream in here.</p>
           ) : (
             <div className="space-y-2">
               {activities.slice(0, 4).map((act, idx) => {

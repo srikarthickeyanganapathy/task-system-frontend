@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import AppWindowPreview from './AppWindowPreview';
+import { ArrowRight } from "../../shared/ui/Icons";
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -63,7 +64,7 @@ export default function HeroSection() {
           
           <motion.div variants={fadeUp} className="hero-cta">
             <Link className="btn btn-primary" to="/register">
-              Start free <span className="arr">-></span>
+              Start free <span className="arr"><ArrowRight /> </span>
             </Link>
             <a className="btn btn-ghost" href="#how-it-works">
               See how it works

@@ -12,7 +12,7 @@ import { normalizePriority, PRIORITY_COLORS } from '@/shared/lib/priority'
 import { StatusBadge } from '@/shared/ui/StatusBadge'
 
 function DueBadge({ dueDate }) {
-  if (!dueDate) return <span className="text-[var(--text-muted)] text-xs">--</span>
+  if (!dueDate) return <Icons.minus className="w-3.5 h-3.5 text-[var(--text-muted)]" aria-label="No due date" />
   const due = new Date(dueDate)
   const now = new Date()
   const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24))
@@ -114,7 +114,7 @@ export function TasksTable({
       cell: ({ row }) => {
         const projectName = row.original.projectName
         const projectId = row.original.projectId
-        if (!projectId) return <span className="text-[var(--text-muted)] text-xs">--</span>
+        if (!projectId) return <Icons.minus className="w-3.5 h-3.5 text-[var(--text-muted)]" aria-label="No project" />
         return (
           <span className="text-xs font-medium text-[var(--text-secondary)] bg-[var(--bg-subtle)] px-2 py-0.5 rounded-md border border-[var(--border-subtle)]">
             {projectName || `#${projectId}`}
@@ -128,7 +128,7 @@ export function TasksTable({
       cell: ({ row }) => {
         const teamName = row.original.teamName || row.original.team?.name
         const teamId = row.original.teamId || row.original.team?.id
-        if (!teamId && !teamName) return <span className="text-[var(--text-muted)] text-xs">--</span>
+        if (!teamId && !teamName) return <Icons.minus className="w-3.5 h-3.5 text-[var(--text-muted)]" aria-label="No team" />
         return (
           <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-md">
             {teamName || `#${teamId}`}

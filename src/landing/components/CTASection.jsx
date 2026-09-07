@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from '@/shared/ui/Icons';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -31,7 +32,7 @@ export function CTASection() {
           
           <motion.div className="cta-actions" variants={itemVariants}>
             <Link className="btn btn-primary" to="/register">
-              Start free <span className="arr">-></span>
+              Start free <ArrowRight className="arr" size={16} aria-hidden="true" />
             </Link>
             <a className="btn btn-ghost" href="mailto:sales@ryokai.dev">
               Talk to sales for enterprise plans

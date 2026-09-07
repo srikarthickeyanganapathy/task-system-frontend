@@ -213,7 +213,7 @@ export function InsightsTab({ teamTasks = [], teamProjects = [], insights }) {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="pt-4">
       <div className="flex items-center gap-2 flex-wrap mb-4">
         <PillNav options={RANGES} value={range} onChange={setRange} />
-        <span className="text-[11px] text-[var(--text-secondary)]">Derived live from team tasks & projects -- no mocked metrics.</span>
+        <span className="text-[11px] text-[var(--text-secondary)]">Derived live from team tasks & projects ? no mocked metrics.</span>
         <span className="flex-1" />
         <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1.5" onClick={exportCsv}>
           <Download className="w-3.5 h-3.5" /> Export CSV
@@ -229,7 +229,7 @@ export function InsightsTab({ teamTasks = [], teamProjects = [], insights }) {
           {/* Rich fragments: velocity strip */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <StatTile icon={TrendingUp} label="Throughput" value={velocity.throughput.toFixed(1)} hint={`${velocity.done} tasks done in window`} />
-            <StatTile icon={Timer} label="Avg cycle time" value={velocity.cycleTime != null ? `${velocity.cycleTime.toFixed(1)}d` : '--'} hint={velocity.cycleTime != null ? 'created -> done' : 'not enough data yet'} tone={velocity.cycleTime != null && velocity.cycleTime > 7 ? 'warning' : 'accent'} />
+            <StatTile icon={Timer} label="Avg cycle time" value={velocity.cycleTime != null ? `${velocity.cycleTime.toFixed(1)}d` : '?'} hint={velocity.cycleTime != null ? 'created ? done' : 'not enough data yet'} tone={velocity.cycleTime != null && velocity.cycleTime > 7 ? 'warning' : 'accent'} />
             <StatTile icon={Target} label="Forecast" value={velocity.forecastDays != null ? `${velocity.forecastDays}d` : '--'} hint={velocity.forecastDays != null ? `${velocity.remaining} tasks left at current pace` : 'not enough data yet'} tone={velocity.forecastDays != null && velocity.forecastDays > 14 ? 'warning' : 'success'} />
           </div>
 
