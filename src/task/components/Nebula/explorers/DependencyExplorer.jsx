@@ -73,7 +73,7 @@ export default function DependencyExplorer({ context, navigator, analysis, onCen
           </span>
         </div>
         {blockers.length === 0 ? (
-          <p className="text-xs text-white/25 italic pl-5">No blockers -- this task is free to execute</p>
+          <p className="text-xs text-white/25 italic pl-5">No blockers ? this task is free to execute</p>
         ) : (
           <div className="space-y-0.5">
             {blockers.map(task => (

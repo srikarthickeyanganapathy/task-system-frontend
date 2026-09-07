@@ -20,6 +20,7 @@ import { useShareProjectWithCrew, useUnshareProjectFromCrew } from '@/crew';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FolderKanban,
+  ArrowRight,
   ArrowUpRight,
   Unlink,
   AlertTriangle,
@@ -276,7 +277,7 @@ function SharedProjectCard({ project, index, canUnshare, onRequestUnshare }) {
             className="text-[10px] font-medium text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors px-2 py-1 rounded-md hover:bg-[var(--bg-subtle)]"
             title="Open full project"
           >
-            ->
+            <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </InteractiveCard>

@@ -1,9 +1,9 @@
 import { motion, useReducedMotion, useAnimationControls } from 'framer-motion';
-import { Zap, Clock, Users, Layers, FileText, Shield } from 'lucide-react';
+import { Zap, Clock, Users, Layers, FileText, Shield, ArrowRight } from 'lucide-react';
 import { useEffect } from 'react';
 
 const marqueeItems = [
-  { text: "Intent -> Execution", icon: Zap },
+  { text: "Intent", trailingText: "Execution", icon: Zap },
   { text: "Personal Focus", icon: Clock },
   { text: "Crew Collaboration", icon: Users },
   { text: "Organizational Alignment", icon: Layers },
@@ -30,6 +30,7 @@ export default function TrustMarquee() {
 
   const marqueeContent = (
     <div className="mg">
+            {item.trailingText && <><ArrowRight size={15} className="mx-2 inline-block" aria-hidden="true" />{item.trailingText}</>}
       {marqueeItems.map((item, idx) => {
         const Icon = item.icon;
         return (

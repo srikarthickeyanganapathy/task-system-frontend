@@ -262,7 +262,7 @@ export function DirectoryTableView({
         header: () => <span className="text-xs font-medium text-[var(--text-muted)]">Joined</span>,
         cell: ({ row }) => {
           const joinedDate = row.original.createdAt || row.original.joinedAt;
-          if (!joinedDate) return <span className="text-xs text-[var(--text-muted)]">--</span>;
+          if (!joinedDate) return <Icons.minus className="w-3.5 h-3.5 text-[var(--text-muted)]" aria-label="No join date" />;
           return (
             <span className="text-xs text-[var(--text-secondary)] flex items-center gap-1">
               <Clock className="w-3 h-3 text-[var(--text-muted)]" />

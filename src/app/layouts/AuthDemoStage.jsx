@@ -146,7 +146,7 @@ const DEMOS = [
             <p className="font-mono text-[6.5px] uppercase tracking-[0.2em] text-[var(--text-tertiary)]">remaining</p>
           </div>
         </div>
-        <p className="mt-3 max-w-[200px] truncate text-center text-[8.5px] text-[var(--text-secondary)]">Refactor sync engine -- deep work</p>
+        <p className="mt-3 max-w-[200px] truncate text-center text-[8.5px] text-[var(--text-secondary)]">Refactor sync engine ? deep work</p>
         <span
           className="mt-2 inline-flex items-center gap-1 rounded-full border px-2.5 py-[3px] font-mono text-[7px] font-semibold uppercase tracking-[0.14em]"
           style={{

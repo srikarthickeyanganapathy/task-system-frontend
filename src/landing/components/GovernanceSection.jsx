@@ -150,7 +150,7 @@ export default function GovernanceSection() {
                 <div className="mb-8">
                   <div className="text-xs text-[var(--accent)] font-medium uppercase tracking-wider mb-2">Authority &amp; Scope</div>
                   <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-1">Command Chain</h2>
-                  <div className="text-sm text-[var(--text-secondary)]">Roles ranked by authority -- select a role to inspect its permissions and scope boundaries.</div>
+                  <div className="text-sm text-[var(--text-secondary)]">Roles ranked by authority ? select a role to inspect its permissions and scope boundaries.</div>
                 </div>
 
                 {/* Posture Bar */}

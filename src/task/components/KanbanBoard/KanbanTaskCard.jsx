@@ -158,7 +158,7 @@ export function KanbanTaskCard({ task, onClick, onQuickComplete, onQuickDelete, 
                 {new Date(task.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
               </span>
             ) : (
-              <span className="text-[10px] text-[var(--text-muted)]">--</span>
+              <Icons.minus className="w-3.5 h-3.5 text-[var(--text-muted)]" aria-label="No due date" />
             )}
           </div>
 

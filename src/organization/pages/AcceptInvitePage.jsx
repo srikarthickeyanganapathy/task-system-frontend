@@ -92,7 +92,7 @@ export function AcceptInvitePage() {
             <Icons.alertCircle className="w-6 h-6" />
           </div>
           <Heading level={3}>Organization invitation</Heading>
-          <Text variant="muted">This invitation link is invalid -- the invite token is missing.</Text>
+          <Text variant="muted">This invitation link is invalid ? the invite token is missing.</Text>
           <Button variant="primary" onClick={() => navigate('/app/organizations')}>
             Go to workspace
           </Button>
